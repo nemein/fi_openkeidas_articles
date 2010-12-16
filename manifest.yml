@@ -1,0 +1,48 @@
+version: 0.0.1
+requires:
+    midgardmvc_helper_forms:
+        - {type: github, user: midgardproject, repository: midgardmvc_helper_forms, branch: master}
+process_injector: fi_openkeidas_articles_injector
+routes:
+    index:
+        path: /
+        controller: fi_openkeidas_articles_controllers_latest
+        action: items
+        template_aliases: 
+            content: foa-show-latest
+    category:
+        path: /category/{$category}
+        controller: fi_openkeidas_articles_controllers_latest
+        action: items
+        template_aliases: 
+            content: foa-show-latest
+    category_type:
+        path: /category/{$category}/{$subcategory}
+        controller: fi_openkeidas_articles_controllers_latest
+        action: items
+        template_aliases: 
+            content: foa-show-latest
+    item_create:
+        path: /create/
+        controller: fi_openkeidas_articles_controllers_item
+        action: create
+        template_aliases: 
+            content: foa-show-form
+    item_read:
+        path: /read/{$item}
+        controller: fi_openkeidas_articles_controllers_item
+        action: read
+        template_aliases: 
+            content: foa-show-item
+    item_update:
+        path: /update/{$item}
+        controller: fi_openkeidas_articles_controllers_item
+        action: update
+        template_aliases: 
+            content: foa-show-form
+    item_delete:
+        path: /delete/{$item}
+        controller: fi_openkeidas_articles_controllers_item
+        action: delete
+        template_aliases: 
+            content: foa-show-delete

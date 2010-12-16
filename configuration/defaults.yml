@@ -1,0 +1,7 @@
+categories:
+    foo:
+        title: Foo
+        categories:
+            bar:
+                title: Bar
+index_items: 10

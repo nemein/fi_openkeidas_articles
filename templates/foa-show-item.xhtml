@@ -1,0 +1,10 @@
+<article xmlns:sioc="http://rdfs.org/sioc/ns#" xmlns:dcterms="http://purl.org/dc/terms/" typeof="http://rdfs.org/sioc/ns#Post" tal:attributes="about string:urn:uuid:${fi_openkeidas_articles/object/guid}">
+    <h1 tal:content="fi_openkeidas_articles/object/title" property="dcterms:title">Blog post</h1>
+    <div id="content-left-subleft">
+        <img src="/midgardmvc-static/fi_openkeidas_website/img/dummy-142-142-1.jpg" width="142" height="142" alt="dummy" />
+        <p class="caption">53 käyttäjää on valinnut tämän hyvinvointiympyräänsä</p>
+        <a class="button row-2" href="#"><span>Lisää hyvinvointi- ympyrään</span></a>
+    </div>
+    <div id="content-left-subright" tal:content="structure fi_openkeidas_articles/object/content" property="sioc:content">Lorem ipsum</div>
+</article>
+
