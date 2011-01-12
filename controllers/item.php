@@ -4,6 +4,8 @@ class fi_openkeidas_articles_controllers_item extends midgardmvc_core_controller
     public function load_object(array $args)
     {
         $this->object = new fi_openkeidas_articles_article($args['item']);
+
+        midgardmvc_core::get_instance()->head->set_title($this->object->title);
     }
     
     public function prepare_new_object(array $args)
