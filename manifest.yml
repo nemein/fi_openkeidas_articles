@@ -10,18 +10,6 @@ routes:
         action: items
         template_aliases: 
             content: foa-show-latest
-    category:
-        path: /category/{$category}
-        controller: fi_openkeidas_articles_controllers_latest
-        action: items
-        template_aliases: 
-            content: foa-show-latest
-    category_type:
-        path: /category/{$category}/{$subcategory}
-        controller: fi_openkeidas_articles_controllers_latest
-        action: items
-        template_aliases: 
-            content: foa-show-latest
     item_create:
         path: /create/
         controller: fi_openkeidas_articles_controllers_item

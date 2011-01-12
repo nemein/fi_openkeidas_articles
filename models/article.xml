@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- This is the Midgard2 schema for articles -->
 <Schema xmlns="http://www.midgard-project.org/repligard/1.4">
-    <type name="fi_openkeidas_articles_article" table="fi_openkeidas_articles_article">
+    <type name="fi_openkeidas_articles_article" table="fi_openkeidas_articles_article" parent="midgardmvc_core_node">
         <user_values>
             <typeof>http://rdfs.org/sioc/ns#Post</typeof>
             <namespaces>sioc:http://rdfs.org/sioc/ns#,dcterms:http://purl.org/dc/terms/</namespaces>
@@ -14,7 +14,7 @@
             <required>true</required>
             <property>dcterms:title</property>
         </property>
-        <property name="category" type="string" index="yes">
+        <property name="node" type="unsigned integer" link="midgardmvc_core_node:id" parentfield="node">
             <description>Article category</description>
             <required>true</required>
         </property>
