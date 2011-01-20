@@ -5,7 +5,7 @@
         <article tal:attributes="about item/rdfmapper/about; typeof item/rdfmapper/typeof">
             <h3>
                 <span tal:content="php: item.metadata.created.format('Y-m-d')">1999-05-07</span>
-                <a tal:content="item/title" tal:attributes="href item/url; property item/rdfmapper/title">Blog post</a>
+                <a tal:content="structure item/title" tal:attributes="href item/url; property item/rdfmapper/title">Blog post</a>
             </h3>
             <div tal:content="structure item/content" tal:attributes="property item/rdfmapper/content">Lorem ipsum</div>
         </article>
