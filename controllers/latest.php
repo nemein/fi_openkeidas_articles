@@ -14,6 +14,13 @@ class fi_openkeidas_articles_controllers_latest
         $this->data['title'] = $node->title;
         $qb->add_constraint('node', 'INTREE', $node->id);
 
+        if (!midgardmvc_ui_create_injector::can_use())
+        {
+            // Regular user, hide unapproved articles
+            // TODO: This check should be moved to authentication service when QB has signals
+            $qb->add_constraint('metadata.isapproved', '=', true);
+        }
+
         $qb->add_order('metadata.created', 'DESC');
         $qb->set_limit(midgardmvc_core::get_instance()->configuration->index_items);
         $items = $qb->execute();
