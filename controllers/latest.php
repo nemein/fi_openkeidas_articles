@@ -33,6 +33,15 @@ class fi_openkeidas_articles_controllers_latest
             $this->data['items']->attach($item);
         }
 
+        // Read container type from config to know whether items can be created to this node
+        $this->data['container_type'] = midgardmvc_core::get_instance()->configuration->index_container;
+
+        $this->data['subnodes'] = array();
+        if ($this->request->get_node()->get_parent_node() != midgardmvc_core::get_instance()->hierarchy->get_root_node())
+        {
+            $this->data['subnodes'] = $this->request->get_node()->get_child_nodes();
+        }
+
         // Define placeholder to be used with UI on empty containers
         $dummy = new fi_openkeidas_articles_article();
         $dummy->url = 'http://example.net';

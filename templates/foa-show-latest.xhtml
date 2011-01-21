@@ -1,6 +1,12 @@
 <h1 tal:content="fi_openkeidas_articles/title">Latest news</h1>
 
-<ol id="fp-wrapper" mgd:type="container" mgd:order="desc" tal:condition="fi_openkeidas_articles/items" tal:attributes="mgd:baseurl request/uri" xmlns:sioc="http://rdfs.org/sioc/ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:mgd="http://www.midgard-project.org/midgard2/9.03" class="news">
+<ol class="articles_sub_navigation" tal:condition="fi_openkeidas_articles/subnodes">
+    <li tal:repeat="subnode fi_openkeidas_articles/subnodes">
+        <a tal:attributes="href php:subnode.get_path()" tal:content="subnode/title">Subfolder</a>
+    </li>
+</ol>
+
+<ol id="fp-wrapper" mgd:order="desc" tal:condition="fi_openkeidas_articles/items" tal:attributes="mgd:baseurl request/uri; mgd:type fi_openkeidas_articles/container_type" xmlns:sioc="http://rdfs.org/sioc/ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:mgd="http://www.midgard-project.org/midgard2/9.03" class="news">
     <li class="fpitem" tal:repeat="item fi_openkeidas_articles/items">
         <article tal:attributes="about item/rdfmapper/about; typeof item/rdfmapper/typeof">
             <h3>
