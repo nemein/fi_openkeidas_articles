@@ -6,6 +6,18 @@ class fi_openkeidas_articles_controllers_latest
         $this->request = $request;
     }
 
+    private function get_node($node_id)
+    {
+        static $nodes = array();
+        if (!isset($nodes[$node_id]))
+        {
+            $node = new midgardmvc_core_node();
+            $node->get_by_id($node_id);
+            $nodes[$node_id] = midgardmvc_core_providers_hierarchy_node_midgard2::get_instance($node);
+        }
+        return $nodes[$node_id];
+    }
+
     public function get_items(array $args)
     {
         $qb = new midgard_query_builder('fi_openkeidas_articles_article');
@@ -28,8 +40,17 @@ class fi_openkeidas_articles_controllers_latest
         $this->data['items'] = new midgardmvc_ui_create_container();
         foreach ($items as $item)
         {
-            // Local news item, generate link
-            $item->url = midgardmvc_core::get_instance()->dispatcher->generate_url('item_read', array('item' => $item->guid), $this->request);
+            if ($item->node == $this->request->get_node()->get_object()->id)
+            {
+                // Local news item
+                $item->url = midgardmvc_core::get_instance()->dispatcher->generate_url('item_read', array('item' => $item->guid), $this->request);
+            }
+            else
+            {
+                $node = $this->get_node($item->node);
+                $item->url = midgardmvc_core::get_instance()->dispatcher->generate_url('item_read', array('item' => $item->guid), $node->get_path());
+            }
+
             $this->data['items']->attach($item);
         }
 
