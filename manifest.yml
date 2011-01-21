@@ -10,27 +10,9 @@ routes:
         action: items
         template_aliases: 
             content: foa-show-latest
-    item_create:
-        path: /create/
-        controller: fi_openkeidas_articles_controllers_item
-        action: create
-        template_aliases: 
-            content: foa-show-form
     item_read:
         path: /read/{$item}
         controller: fi_openkeidas_articles_controllers_item
         action: read
         template_aliases: 
             content: foa-show-item
-    item_update:
-        path: /update/{$item}
-        controller: fi_openkeidas_articles_controllers_item
-        action: update
-        template_aliases: 
-            content: foa-show-form
-    item_delete:
-        path: /delete/{$item}
-        controller: fi_openkeidas_articles_controllers_item
-        action: delete
-        template_aliases: 
-            content: foa-show-delete

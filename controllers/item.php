@@ -41,50 +41,12 @@ class fi_openkeidas_articles_controllers_item extends midgardmvc_core_controller
     {
         return midgardmvc_core::get_instance()->dispatcher->generate_url
         (
-            'item_update', array
+            'item_read', array
             (
                 'item' => $this->object->guid
             ),
             $this->request
         );
-    }
-
-    public function load_form()
-    {
-        $this->form = midgardmvc_helper_forms_mgdschema::create($this->object, false);
-
-        // Make Category and Type proper selects instead
-        unset($this->form->category);
-        unset($this->form->type);
-
-        $field = $this->form->add_field('category', 'text');
-        $field->set_value($this->object->category);
-        $widget = $field->set_widget('selectoption');
-        $widget->set_label('category');
-        $category_options = array();
-        $categories = midgardmvc_core::get_instance()->configuration->categories;
-        foreach ($categories as $category => $category_data)
-        {
-            $category_options[] = array
-            (
-                'description' => $category_data['title'],
-                'value' => $category,
-            );
-
-            if (isset($category_data['categories']))
-            {
-                foreach ($category_data['categories'] as $subcategory => $subcategory_data)
-                {
-                    $category_options[] = array
-                    (
-                        'description' => "&gt; {$subcategory_data['title']}",
-                        'value' => "{$category}/{$subcategory}",
-                    );
-                }
-            }
-        }
-
-        $widget->set_options($category_options);
     }
 }
 ?>
