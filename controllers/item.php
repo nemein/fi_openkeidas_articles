@@ -3,7 +3,13 @@ class fi_openkeidas_articles_controllers_item extends midgardmvc_core_controller
 {
     public function load_object(array $args)
     {
-        $this->object = new fi_openkeidas_articles_article($args['item']);
+        try {
+            $this->object = new fi_openkeidas_articles_article($args['item']);
+        }
+        catch (midgard_error_exception $e)
+        {
+            throw new midgardmvc_exception_notfound($e->getMessage());
+        }
 
         if (   !midgardmvc_ui_create_injector::can_use()
             && !$this->object->is_approved())
