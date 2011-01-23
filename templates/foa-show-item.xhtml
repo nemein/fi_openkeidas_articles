@@ -3,8 +3,9 @@
     <div id="content-left-subleft">
         <tal:block tal:content="structure php:midgardmvc_helper_attachmentserver_helpers::render_location_image(fi_openkeidas_articles['object'], 'lift_image', 'thumbnail')" />
         <p class="caption">53 käyttäjää on valinnut tämän hyvinvointiympyräänsä</p>
-        <a class="button row-2" href="#"><span>Valitse</span></a>
+        <a class="button row-2 fav" href="#" tal:attributes="id fi_openkeidas_articles/object/guid; class fi_openkeidas_articles/class; href fi_openkeidas_articles/url">
+            <span tal:content="fi_openkeidas_articles/caption">Valitse</span>
+        </a>
     </div>
     <div id="content-left-subright" tal:content="structure fi_openkeidas_articles/object/content" tal:attributes="property fi_openkeidas_articles/object/rdfmapper/content">Lorem ipsum</div>
 </article>
-

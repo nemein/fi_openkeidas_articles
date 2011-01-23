@@ -29,13 +29,19 @@ class fi_openkeidas_articles_injector
         }
     }
 
+    public function inject_template(midgardmvc_core_request $request)
+    {
+        // We inject the template to provide Open Keidas styling
+        $request->add_component_to_chain(midgardmvc_core::get_instance()->component->get('fi_openkeidas_articles'), true);
+    }
+
     public static function check_node(fi_openkeidas_articles_article $article, $params)
     {
         if ($article->node)
         {
             return;
         }
-        
+
         $request = midgardmvc_core::get_instance()->context->get_request();
         $node = $request->get_node();
         if (!$node)

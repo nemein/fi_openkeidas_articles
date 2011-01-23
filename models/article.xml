@@ -23,4 +23,13 @@
             <property>sioc:content</property>
         </property>
     </type>
+    <type name="fi_openkeidas_articles_favourite" table="fi_openkeidas_articles_favourite">
+        <property name="id" type="unsigned integer" primaryfield="id">
+            <description>Local non-replication-safe database identifier</description>
+        </property>
+        <property name="article" type="guid" link="fi_openkeidas_articles_article:guid" parentfield="article">
+            <description>Article guid</description>
+            <required>true</required>
+        </property>
+    </type>
 </Schema>

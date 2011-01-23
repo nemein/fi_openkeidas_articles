@@ -3,16 +3,29 @@ requires:
     midgardmvc_helper_forms:
         - {type: github, user: midgardproject, repository: midgardmvc_helper_forms, branch: master}
 process_injector: fi_openkeidas_articles_injector
+template_injector: fi_openkeidas_articles_injector
 routes:
     index:
         path: /
         controller: fi_openkeidas_articles_controllers_latest
         action: items
-        template_aliases: 
+        template_aliases:
             content: foa-show-latest
     item_read:
         path: /read/{$item}
         controller: fi_openkeidas_articles_controllers_item
         action: read
-        template_aliases: 
+        template_aliases:
             content: foa-show-item
+    item_like:
+        path: /like
+        controller: fi_openkeidas_articles_controllers_favourite
+        action: like
+        template_aliases:
+            root: midgardmvc-show-json
+    item_dislike:
+        path: /dislike
+        controller: fi_openkeidas_articles_controllers_favourite
+        action: dislike
+        template_aliases:
+            root: midgardmvc-show-json
