@@ -79,30 +79,12 @@ class fi_openkeidas_articles_controllers_item extends midgardmvc_core_controller
     {
         parent::get_read($args);
 
+        $this->data['class'] = "button row-2 fav";
+
         // check if the item has already been favourited by this user
         $user_guid = midgardmvc_core::get_instance()->authentication->get_person()->guid;
 
-        $storage = new midgard_query_storage('fi_openkeidas_articles_favourite');
-
-        $qc = new midgard_query_constraint_group('AND');
-        $qc->add_constraint(new midgard_query_constraint(
-            new midgard_query_property('metadata.creator', $storage),
-            '=',
-            new midgard_query_value($user_guid)
-        ));
-        $qc->add_constraint(new midgard_query_constraint(
-            new midgard_query_property('article', $storage),
-            '=',
-            new midgard_query_value($this->object->guid)
-        ));
-
-        $q = new midgard_query_select($storage);
-        $q->set_constraint($qc);
-        $q->execute();
-
-        $results = $q->list_objects();
-
-        $this->data['class'] = "button row-2 fav";
+        $results = fi_openkeidas_articles_controllers_favourite::load_favourites($user_guid, $this->object->guid);
 
         if (count($results))
         {
@@ -119,7 +101,6 @@ class fi_openkeidas_articles_controllers_item extends midgardmvc_core_controller
             $this->data['url'] = midgardmvc_core::get_instance()->dispatcher->generate_url('item_like', array(), $this->request);
         }
 
-//        midgardmvc_core::get_instance()->head->enable_jquery();
         midgardmvc_core::get_instance()->head->add_jsfile(MIDGARDMVC_STATIC_URL . '/fi_openkeidas_articles/js/buttons.js');
     }
 }
