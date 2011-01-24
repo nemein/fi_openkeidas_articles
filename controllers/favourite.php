@@ -122,7 +122,13 @@ class fi_openkeidas_articles_controllers_favourite
         {
             foreach ($favourites as $favourite)
             {
-                $article = new fi_openkeidas_articles_article($favourite->article);
+                try {
+                    $article = new fi_openkeidas_articles_article($favourite->article);
+                }
+                catch (midgard_error_exception $e)
+                {
+                    continue;
+                }
                 // determine the parent node of the favorited article
                 // go up until the parent node of node is not served by 'fi_openkeidas_articles'
                 $node_id = $article->node;
