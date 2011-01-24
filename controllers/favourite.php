@@ -154,7 +154,13 @@ class fi_openkeidas_articles_controllers_favourite
             foreach ($favourites as $favourite)
             {
                 $node = null;
-                $article = new fi_openkeidas_articles_article($favourite->article);
+                try {
+                    $article = new fi_openkeidas_articles_article($favourite->article);
+                }
+                catch (midgard_error_exception $e)
+                {
+                    continue;
+                }
                 $node = self::get_root_of_object($article->node);
 
                 // update the appropriate counter

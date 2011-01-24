@@ -23,7 +23,7 @@
             <property>sioc:content</property>
         </property>
     </type>
-    <type name="fi_openkeidas_articles_favourite" table="fi_openkeidas_articles_favourite">
+    <type name="fi_openkeidas_articles_favourite" table="fi_openkeidas_articles_favourite" parent="fi_openkeidas_articles_article">
         <property name="id" type="unsigned integer" primaryfield="id">
             <description>Local non-replication-safe database identifier</description>
         </property>
