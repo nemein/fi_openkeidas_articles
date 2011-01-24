@@ -1,0 +1,7 @@
+                <div class="category" tal:condition="fi_openkeidas_articles/nodes" tal:repeat="node fi_openkeidas_articles/nodes">
+                    <span class="title" tal:content="node/title"></span>
+                    <a href="#">
+                        <span tal:attributes="class node/name" tal:content="node/counter"></span>
+                        <span class="postfix" i18n:translate="'piece'"></span>
+                    </a>
+                </div>

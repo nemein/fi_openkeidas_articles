@@ -29,3 +29,25 @@ routes:
         action: dislike
         template_aliases:
             root: midgardmvc-show-json
+    favourite_counters:
+        path: /favourites/counters/
+        controller: fi_openkeidas_articles_controllers_favourite
+        action: counters
+        template_aliases:
+            content: foa-show-favouriting-counters
+    favourite_counters_json:
+        path: /favourites/counters/json/
+        controller: fi_openkeidas_articles_controllers_favourite
+        action: counters
+        template_aliases:
+            root: midgardmvc-show-json
+    favourite_charturl:
+        path: /favourites/charturl/
+        controller: fi_openkeidas_articles_controllers_favourite
+        action: charturl
+    favourite_charturl_json:
+        path: /favourites/charturl/json
+        controller: fi_openkeidas_articles_controllers_favourite
+        action: charturl
+        template_aliases:
+            root: midgardmvc-show-json

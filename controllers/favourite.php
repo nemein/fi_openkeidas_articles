@@ -1,16 +1,49 @@
 <?php
 class fi_openkeidas_articles_controllers_favourite
 {
+    // the current user's GUID
     private $user_guid = null;
+
+    // all nodes of the current MVC application that may have favouritable objects
+    private $nodes = array();
+
+    // the current mvc app
+    private $mvc = null;
 
     /**
      * Checks if there is a valid user logged in
      */
     public function __construct(midgardmvc_core_request $request)
     {
+        $this->mvc = midgardmvc_core::get_instance();
+
         $this->request = $request;
-        $this->user_guid = midgardmvc_core::get_instance()->authentication->get_person()->guid;
-        midgardmvc_core::get_instance()->authorization->require_user();
+
+        $this->user_guid = $this->mvc->authentication->get_person()->guid;
+
+        $this->mvc->authorization->require_user();
+
+        self::reset_counters();
+    }
+
+    /**
+     * Initilizes internal counters
+     */
+    private function reset_counters()
+    {
+        $parent_node = $this->mvc->hierarchy->get_node_by_path('/' . $this->mvc->configuration->favouriting_root);
+        $children = $parent_node->get_child_nodes();
+
+        foreach ($children as $child)
+        {
+            $component = $child->get_component();
+            if ($component == 'fi_openkeidas_articles')
+            {
+                $this->nodes[$child->name]['name'] = $child->name;
+                $this->nodes[$child->name]['title'] = $child->title . ': ';
+                $this->nodes[$child->name]['counter'] = 0;
+            }
+        }
     }
 
     /**
@@ -26,9 +59,9 @@ class fi_openkeidas_articles_controllers_favourite
         $this->data['success'] = 0;
         if (isset($_POST['article_guid']))
         {
-            $results = self::load_favourites($this->user_guid, $_POST['article_guid']);
+            $favourites = self::load_favourites($this->user_guid, $_POST['article_guid']);
 
-            if (! count($results))
+            if (! count($favourites))
             {
                 $favourite = new fi_openkeidas_articles_favourite();
                 $favourite->article = $_POST['article_guid'];
@@ -37,12 +70,13 @@ class fi_openkeidas_articles_controllers_favourite
                 if ($success)
                 {
                     $this->data['success'] = 1;
-                    $this->data['reverse_caption'] = midgardmvc_core::get_instance()->i18n->get('unselect', 'fi_openkeidas_articles');
-                    $this->data['reverse_action'] = midgardmvc_core::get_instance()->dispatcher->generate_url('item_dislike', array(), $this->request);
+                    $this->data['reverse_caption'] = $this->mvc->i18n->get('unselect', 'fi_openkeidas_articles');
+                    $this->data['reverse_action'] = $this->mvc->dispatcher->generate_url('item_dislike', array(), $this->request);
                 }
             }
+            self::get_counters($args);
+            self::get_charturl($args);
         }
-        ob_flush();
     }
 
     /**
@@ -57,35 +91,96 @@ class fi_openkeidas_articles_controllers_favourite
         $this->data['success'] = 0;
         if (isset($_POST['article_guid']))
         {
-            $results = self::load_favourites($this->user_guid, $_POST['article_guid']);
+            $favourites = self::load_favourites($this->user_guid, $_POST['article_guid']);
 
-            if (count($results))
+            if (count($favourites))
             {
-                $favourite = $results[0];
+                $favourite = $favourites[0];
                 $success = $favourite->delete();
 
                 if ($success)
                 {
                     $this->data['success'] = 1;
-                    $this->data['reverse_caption'] = midgardmvc_core::get_instance()->i18n->get('select', 'fi_openkeidas_articles');
-                    $this->data['reverse_action'] = midgardmvc_core::get_instance()->dispatcher->generate_url('item_like', array(), $this->request);
+                    $this->data['reverse_caption'] = $this->mvc->i18n->get('select', 'fi_openkeidas_articles');
+                    $this->data['reverse_action'] = $this->mvc->dispatcher->generate_url('item_like', array(), $this->request);
                 }
             }
+            self::get_counters($args);
+            self::get_charturl($args);
         }
-        ob_flush();
     }
 
     /**
-     * Logs the activity
+     * Updates the internal counters
+     *
      */
-    private function log_activity($user, $verb, $guid)
+    private function update_counters()
     {
-        $activity = new midgard_activity();
-        $activity->actor = $user;
-        $activity->verb = $verb;
-        $activity->target = $guid;
-        $activity->application = 'fi_openkeidas_articles';
-        $activity->create();
+        $favourites = self::load_favourites($this->user_guid);
+
+        if (count($favourites))
+        {
+            foreach ($favourites as $favourite)
+            {
+                $article = new fi_openkeidas_articles_article($favourite->article);
+                // determine the parent node of the favorited article
+                // go up until the parent node of node is not served by 'fi_openkeidas_articles'
+                $node_id = $article->node;
+                do
+                {
+                    $node = new midgardmvc_core_node($node_id);
+                    $parent = new midgardmvc_core_node($node->up);
+                    $node_id = $node->up;
+                } while (   $node->component == 'fi_openkeidas_articles'
+                         && $parent->id != 0
+                         && $parent->name != $this->mvc->configuration->favouriting_root);
+
+                // update the appropriate counter
+                if (   $node->component == 'fi_openkeidas_articles'
+                    && array_key_exists($node->name, $this->nodes))
+                {
+                    ++$this->nodes[$node->name]['counter'];
+                }
+
+                unset($node);
+            }
+        }
+        else
+        {
+            self::reset_counters();
+        }
+    }
+
+    /**
+     * Prepares an HTML snippet that shows the counters
+     *
+     * @param array args
+     *
+     */
+    public function get_counters(array $args)
+    {
+        self::update_counters();
+        $this->data['nodes'] = $this->nodes;
+    }
+
+    /**
+     * Sets the URL of the pie chart image that shows the number of favourited
+     * articles in different categories
+     *
+     * @param array args
+     */
+    public function get_charturl(array $args)
+    {
+        self::update_counters();
+
+        $this->data['charturl'] = $this->mvc->configuration->pie_chart['provider'];
+
+        foreach ($this->nodes as $key => $node)
+        {
+            $this->data['charturl'] .= '&' . $key . '=' . $node['counter'];
+        }
+
+        $this->data['charturl'] .= '&' . time();
     }
 
     /**
@@ -96,27 +191,55 @@ class fi_openkeidas_articles_controllers_favourite
      * @return array of db entries
      *
      */
-    public function load_favourites($user_guid, $article_guid)
+    public function load_favourites($user_guid = null, $article_guid = null)
     {
+        if (! $user_guid)
+        {
+            return null;
+        }
         $storage = new midgard_query_storage('fi_openkeidas_articles_favourite');
 
-        $qc = new midgard_query_constraint_group('AND');
-        $qc->add_constraint(new midgard_query_constraint(
-            new midgard_query_property('metadata.creator', $storage),
-            '=',
-            new midgard_query_value($user_guid)
-        ));
-        $qc->add_constraint(new midgard_query_constraint(
-            new midgard_query_property('article', $storage),
-            '=',
-            new midgard_query_value($article_guid)
-        ));
+        if (! $article_guid)
+        {
+            $qc = new midgard_query_constraint(
+                new midgard_query_property('metadata.creator', $storage),
+                '=',
+                new midgard_query_value($user_guid)
+            );
+        }
+        else
+        {
+            $qc = new midgard_query_constraint_group('AND');
+            $qc->add_constraint(new midgard_query_constraint(
+                new midgard_query_property('metadata.creator', $storage),
+                '=',
+                new midgard_query_value($user_guid)
+            ));
+            $qc->add_constraint(new midgard_query_constraint(
+                new midgard_query_property('article', $storage),
+                '=',
+                new midgard_query_value($article_guid)
+            ));
+        }
 
         $q = new midgard_query_select($storage);
         $q->set_constraint($qc);
         $q->execute();
 
         return $q->list_objects();
+    }
+
+    /**
+     * Logs the activity
+     */
+    private function log_activity($user_guid, $verb, $article_guid)
+    {
+        $activity = new midgard_activity();
+        $activity->actor = $user_guid;
+        $activity->verb = $verb;
+        $activity->target = $article_guid;
+        $activity->application = 'fi_openkeidas_articles';
+        $activity->create();
     }
 }
 ?>

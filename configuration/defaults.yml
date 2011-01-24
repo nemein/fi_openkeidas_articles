@@ -6,3 +6,8 @@ categories:
                 title: Bar
 index_items: 10
 index_container: container
+# favouriting statistics will be calculated for articles that within this node
+favouriting_root: keidas
+# pie chart dimensions
+pie_chart:
+    provider: /euc:pie/simple?type=png&width=120&height=120

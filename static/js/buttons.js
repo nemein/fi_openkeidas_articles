@@ -17,6 +17,12 @@ jQuery(document).ready(function() {
                         jQuery(button).removeClass('dislike');
                         jQuery(button).addClass('like');
                     }
+
+                    jQuery.each(json.nodes, function(index, node) {
+                        jQuery('span.' + node.name).html(node.counter);
+                    });
+                    jQuery('div.stats img.chart').attr('src', json.charturl);
+
                     jQuery(button).children('span').html(json.reverse_caption);
                     jQuery(button).attr('href', json.reverse_action);
                 },

@@ -15,3 +15,6 @@ msgstr "Valitse"
 
 msgid "unselect"
 msgstr "Poista"
+
+msgid "piece"
+msgstr "kpl"

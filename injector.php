@@ -21,12 +21,13 @@ class fi_openkeidas_articles_injector
             midgard_object_class::connect_default('fi_openkeidas_articles_article', 'action-create', array('fi_openkeidas_articles_injector', 'check_node'), array($request));
             $connected = true;
         }
-
+/*
         $component = $request->get_node()->get_component();
         if ($component == 'fi_openkeidas_articles')
         {
             midgardmvc_core::get_instance()->authorization->require_user();
         }
+*/
     }
 
     public function inject_template(midgardmvc_core_request $request)
