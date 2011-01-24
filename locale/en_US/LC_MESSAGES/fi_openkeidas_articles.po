@@ -17,4 +17,7 @@ msgid "unselect"
 msgstr "Unselect"
 
 msgid "piece"
-msgstr " pcs"
+msgstr "pcs"
+
+msgid "no_favourites_in_topic"
+msgstr "There are no favourites in this topic"

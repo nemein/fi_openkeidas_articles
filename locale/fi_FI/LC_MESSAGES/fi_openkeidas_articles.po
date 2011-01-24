@@ -18,3 +18,6 @@ msgstr "Poista"
 
 msgid "piece"
 msgstr "kpl"
+
+msgid "no_favourites_in_topic"
+msgstr "Ei suosikkeja tästä aiheesta"
