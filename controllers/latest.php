@@ -141,6 +141,7 @@ class fi_openkeidas_articles_controllers_latest
             $dummy = new fi_openkeidas_articles_article();
             $dummy->url = '#';
             $this->data['items']->set_placeholder($dummy);
+            $this->data['items']->set_urlpattern(midgardmvc_core::get_instance()->dispatcher->generate_url('item_read', array('item' => 'GUID'), $this->request));
         }
 
         midgardmvc_core::get_instance()->head->set_title($this->data['title']);
