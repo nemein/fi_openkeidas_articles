@@ -250,6 +250,21 @@ class fi_openkeidas_articles_controllers_favourite
         }
     }
 
+    public static function count_favourites($article_guid)
+    {
+        $storage = new midgard_query_storage('fi_openkeidas_articles_favourite');
+        $qc = new midgard_query_constraint
+        (
+            new midgard_query_property('article', $storage),
+            '=',
+            new midgard_query_value($article_guid)
+        );
+        $q = new midgard_query_select($storage);
+        $q->set_constraint($qc);
+        $q->execute();
+        return $q->get_results_count();
+    }
+
     /**
      * Loads favourited items
      *

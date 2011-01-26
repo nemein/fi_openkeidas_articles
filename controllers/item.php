@@ -81,6 +81,8 @@ class fi_openkeidas_articles_controllers_item extends midgardmvc_core_controller
 
         $this->data['class'] = "button row-2 fav";
 
+        $this->data['favs'] = fi_openkeidas_articles_controllers_favourite::count_favourites($this->object->guid);
+
         // check if the item has already been favourited by this user
         $user_guid = midgardmvc_core::get_instance()->authentication->get_person()->guid;
 
