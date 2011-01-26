@@ -34,14 +34,18 @@ class fi_openkeidas_articles_controllers_latest
         return $qb;
     }
 
-    private function generate_abstract($string, $maxlength, $buffer = 10)
+    private function generate_abstract($string, $maxlength)
     {
+        $string = str_replace('<br />', "\n", $string);
+        $string = str_replace('</p>', "\n", $string);
+        $string = str_replace('</div>', "\n", $string);
         $string = strip_tags($string);
         if (mb_strlen($string) <= $maxlength)
         {
             return $string;
         }
 
+        $buffer = $maxlength * 0.1;
         $string = substr($string, 0, $maxlength + $buffer);
 
         $last_period = mb_strrpos($string, '.');
@@ -53,7 +57,6 @@ class fi_openkeidas_articles_controllers_latest
         }
 
         $last_space = mb_strrpos($string, ' ');
-        die($last_space);
         return mb_substr($string, 0, $last_space);
     }
 
