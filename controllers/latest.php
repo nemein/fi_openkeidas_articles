@@ -109,6 +109,11 @@ class fi_openkeidas_articles_controllers_latest
         $this->data['items'] = new midgardmvc_ui_create_container();
         foreach ($items as $item)
         {
+            if (empty($item->content))
+            {
+                $item->content = ' ';
+            }
+
             $item->abstract = $this->generate_abstract($item->content, 200);
             if ($item->node == $node->id)
             {
