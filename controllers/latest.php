@@ -128,7 +128,6 @@ class fi_openkeidas_articles_controllers_latest
             $this->data['items']->attach($item);
         }
 
-        $this->data['subnodes'] = array();
         if ($this->request->get_node()->get_parent_node() != midgardmvc_core::get_instance()->hierarchy->get_root_node())
         {
             $this->data['subnodes'] = $this->request->get_node()->get_child_nodes();

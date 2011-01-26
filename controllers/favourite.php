@@ -227,7 +227,8 @@ class fi_openkeidas_articles_controllers_favourite
         $node = self::get_root_of_object($id);
 
         $this->data['title'] = $node->title;
-        $this->data['items'] = array();
+        $this->data['items'] = new midgardmvc_ui_create_container();
+        $this->data['container_type'] = 'container_readonly';
 
         // get the article objects
         if (!isset($this->nodes[$node->name]))
@@ -245,7 +246,7 @@ class fi_openkeidas_articles_controllers_favourite
                     array('item' => $article->guid),
                     $this->request
                 );
-                array_push($this->data['items'], $article);
+                $this->data['items']->attach($article);
             }
         }
     }

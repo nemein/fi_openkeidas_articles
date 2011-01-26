@@ -1,6 +1,6 @@
 <h1 tal:content="fi_openkeidas_articles/title">Latest news</h1>
 
-<ol class="articles_sub_navigation" tal:condition="fi_openkeidas_articles/subnodes">
+<ol class="articles_sub_navigation" tal:condition="exists: fi_openkeidas_articles/subnodes">
     <li tal:repeat="subnode fi_openkeidas_articles/subnodes">
         <a tal:attributes="href php:subnode.get_path()" tal:content="subnode/title">Subfolder</a>
     </li>

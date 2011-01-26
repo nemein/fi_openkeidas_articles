@@ -62,4 +62,4 @@ routes:
         controller: fi_openkeidas_articles_controllers_favourite
         action: list
         template_aliases:
-            content: foa-show-favourited-list
+            content: foa-show-latest
