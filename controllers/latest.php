@@ -116,6 +116,10 @@ class fi_openkeidas_articles_controllers_latest
             else
             {
                 $subnode = $this->get_node($item->node);
+                if ($subnode->get_component() != 'fi_openkeidas_articles')
+                {
+                    continue;
+                }
                 $item->url = midgardmvc_core::get_instance()->dispatcher->generate_url('item_read', array('item' => $item->guid), $subnode->get_path());
             }
 
