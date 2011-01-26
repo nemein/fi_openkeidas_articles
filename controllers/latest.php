@@ -36,9 +36,11 @@ class fi_openkeidas_articles_controllers_latest
 
     private function generate_abstract($string, $maxlength)
     {
-        $string = str_replace('<br />', "\n", $string);
-        $string = str_replace('</p>', "\n", $string);
-        $string = str_replace('</div>', "\n", $string);
+        $newlinize_tags = array('<br />', '</p>', '</div>', '</h1>', '</h2>', '</h3>');
+        foreach ($newlinize_tags as $tag)
+        {
+            $string = str_replace($tag, "\n", $string);
+        }
         $string = strip_tags($string);
         if (mb_strlen($string) <= $maxlength)
         {
