@@ -16,7 +16,7 @@
                 <h3>
                     <a tal:content="structure item/title" tal:attributes="href item/url; property item/rdfmapper/title">Blog post</a>
                 </h3>
-                <div><span tal:content="structure item/abstract">Lorem ipsum</span> <a tal:attributes="href item/url">Lue lisää</a></div>
+                <div><span tal:condition="exists: item/abstract" tal:content="structure item/abstract">Lorem ipsum</span> <a tal:attributes="href item/url">Lue lisää</a></div>
             </div>
         </article>
     </li>
