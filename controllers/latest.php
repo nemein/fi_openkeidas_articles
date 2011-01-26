@@ -109,11 +109,6 @@ class fi_openkeidas_articles_controllers_latest
         $this->data['items'] = new midgardmvc_ui_create_container();
         foreach ($items as $item)
         {
-            if (empty($item->content))
-            {
-                $item->content = ' ';
-            }
-
             $item->abstract = $this->generate_abstract($item->content, 200);
             if ($item->node == $node->id)
             {
@@ -144,7 +139,7 @@ class fi_openkeidas_articles_controllers_latest
 
         // Define placeholder to be used with UI on empty containers
         $dummy = new fi_openkeidas_articles_article();
-        $dummy->url = 'http://example.net';
+        $dummy->url = '#';
         $this->data['items']->set_placeholder($dummy);
 
         midgardmvc_core::get_instance()->head->set_title($this->data['title']);
