@@ -57,3 +57,9 @@ routes:
         action: charturl
         template_aliases:
             root: midgardmvc-show-json
+    favourite_list:
+        path: /favourites/list/
+        controller: fi_openkeidas_articles_controllers_favourite
+        action: list
+        template_aliases:
+            content: foa-show-favourited-list

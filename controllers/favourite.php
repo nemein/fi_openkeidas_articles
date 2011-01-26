@@ -42,6 +42,8 @@ class fi_openkeidas_articles_controllers_favourite
                 $this->nodes[$child->name]['name'] = $child->name;
                 $this->nodes[$child->name]['title'] = $child->title . ': ';
                 $this->nodes[$child->name]['counter'] = 0;
+                $this->nodes[$child->name]['favlist'] = $child->get_path() . 'favourites/list';
+                $this->nodes[$child->name]['article_guids'] = array();
             }
         }
     }
@@ -110,6 +112,35 @@ class fi_openkeidas_articles_controllers_favourite
         }
     }
 
+
+    /**
+     * Goes up in the tree until it reaches a parent node
+     * whose component is not 'fi_openkeidas_articles'
+     * or whose parent isn't the 0 node
+     *
+     * If such node found then that node is considered the root of the object.
+     *
+     * @param id ID or GUID of the article or a node
+     *
+     * @return midgardmvc_core_node
+     */
+    private function get_root_of_object($id)
+    {
+        $node = null;
+        do
+        {
+            $node = new midgardmvc_core_node($id);
+            $parent = new midgardmvc_core_node($node->up);
+            $id = $node->up;
+        } while (   $node->component == 'fi_openkeidas_articles'
+                 && $parent->id != 0
+                 && $parent->name != $this->mvc->configuration->favouriting_root);
+
+        unset($parent);
+
+        return $node;
+    }
+
     /**
      * Updates the internal counters
      *
@@ -122,6 +153,7 @@ class fi_openkeidas_articles_controllers_favourite
         {
             foreach ($favourites as $favourite)
             {
+                $node = null;
                 try {
                     $article = new fi_openkeidas_articles_article($favourite->article);
                 }
@@ -129,23 +161,15 @@ class fi_openkeidas_articles_controllers_favourite
                 {
                     continue;
                 }
-                // determine the parent node of the favorited article
-                // go up until the parent node of node is not served by 'fi_openkeidas_articles'
-                $node_id = $article->node;
-                do
-                {
-                    $node = new midgardmvc_core_node($node_id);
-                    $parent = new midgardmvc_core_node($node->up);
-                    $node_id = $node->up;
-                } while (   $node->component == 'fi_openkeidas_articles'
-                         && $parent->id != 0
-                         && $parent->name != $this->mvc->configuration->favouriting_root);
+                $node = self::get_root_of_object($article->node);
 
                 // update the appropriate counter
-                if (   $node->component == 'fi_openkeidas_articles'
+                if (   $node
+                    && $node->component == 'fi_openkeidas_articles'
                     && array_key_exists($node->name, $this->nodes))
                 {
                     ++$this->nodes[$node->name]['counter'];
+                    array_push($this->nodes[$node->name]['article_guids'], $article->guid);
                 }
 
                 unset($node);
@@ -187,6 +211,39 @@ class fi_openkeidas_articles_controllers_favourite
         }
 
         $this->data['charturl'] .= '&' . time();
+    }
+
+    /**
+     * Populates data to display a list of fav'ed items within a node
+     *
+     * @param array args
+     */
+    public function get_list(array $args)
+    {
+        $id = $this->request->get_node()->get_object()->id;
+
+        self::update_counters();
+
+        $node = self::get_root_of_object($id);
+
+        $this->data['title'] = $node->title;
+        $this->data['items'] = array();
+
+        // get the article objects
+        foreach ($this->nodes[$node->name]['article_guids'] as $guid)
+        {
+            $article = new fi_openkeidas_articles_article($guid);
+            if ($article)
+            {
+                // add an extra property for linking
+                $article->url = $this->mvc->dispatcher->generate_url(
+                    'item_read',
+                    array('item' => $article->guid),
+                    $this->request
+                );
+                array_push($this->data['items'], $article);
+            }
+        }
     }
 
     /**

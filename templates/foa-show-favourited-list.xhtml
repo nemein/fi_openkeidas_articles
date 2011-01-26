@@ -1,0 +1,13 @@
+<h1 tal:condition="fi_openkeidas_articles/title" tal:content="fi_openkeidas_articles/title">Latest news</h1>
+
+<div class="no_favourites" tal:condition="not: fi_openkeidas_articles/items" i18n:translate="'no_favourites_in_topic'"></div>
+
+<ol id="fp-wrapper"  class="news favlist" tal:condition="fi_openkeidas_articles/items">
+    <li class="fpitem" tal:repeat="item fi_openkeidas_articles/items">
+        <h3>
+            <span tal:content="php: item.metadata.created.format('Y-m-d')">1999-05-07</span>
+            <a tal:content="structure item/title" tal:attributes="href item/url">Blog post</a>
+        </h3>
+        <!--div tal:content="structure item/content" tal:attributes="property item/rdfmapper/content">Lorem ipsum</div-->
+    </li>
+</ol>
