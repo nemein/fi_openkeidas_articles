@@ -230,6 +230,10 @@ class fi_openkeidas_articles_controllers_favourite
         $this->data['items'] = array();
 
         // get the article objects
+        if (!isset($this->nodes[$node->name]))
+        {
+            return;
+        }
         foreach ($this->nodes[$node->name]['article_guids'] as $guid)
         {
             $article = new fi_openkeidas_articles_article($guid);
