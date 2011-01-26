@@ -34,6 +34,29 @@ class fi_openkeidas_articles_controllers_latest
         return $qb;
     }
 
+    private function generate_abstract($string, $maxlength, $buffer = 10)
+    {
+        $string = strip_tags($string);
+        if (mb_strlen($string) <= $maxlength)
+        {
+            return $string;
+        }
+
+        $string = substr($string, 0, $maxlength + $buffer);
+
+        $last_period = mb_strrpos($string, '.');
+        if (   $last_period !== false
+            && $last_period > ($maxlength * 0.8))
+        {
+            // Found a period in the last 20% of string, go with it.
+            return mb_substr($string, 0, $last_period + 1);
+        }
+
+        $last_space = mb_strrpos($string, ' ');
+        die($last_space);
+        return mb_substr($string, 0, $last_space);
+    }
+
     public function get_items(array $args)
     {
         $node = $this->request->get_node()->get_object();
@@ -81,6 +104,7 @@ class fi_openkeidas_articles_controllers_latest
         $this->data['items'] = new midgardmvc_ui_create_container();
         foreach ($items as $item)
         {
+            $item->abstract = $this->generate_abstract($item->content, 200);
             if ($item->node == $node->id)
             {
                 // Local news item

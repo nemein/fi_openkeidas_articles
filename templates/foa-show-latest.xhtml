@@ -16,7 +16,7 @@
             <div>
             <tal:block tal:content="structure php:midgardmvc_helper_attachmentserver_helpers::render_location_image(item, 'lift_image', 'smallthumbnail')" />
             </div>
-            <div tal:content="structure item/content" tal:attributes="property item/rdfmapper/content">Lorem ipsum</div>
+            <div><span tal:content="structure item/abstract">Lorem ipsum</span> <a tal:attributes="href item/url">Lue lisää</a></div>
         </article>
     </li>
 </ol>
