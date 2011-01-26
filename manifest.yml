@@ -11,6 +11,12 @@ routes:
         action: items
         template_aliases:
             content: foa-show-latest
+    index_page:
+        path: /{$int:page}
+        controller: fi_openkeidas_articles_controllers_latest
+        action: items
+        template_aliases:
+            content: foa-show-latest
     item_read:
         path: /read/{$item}
         controller: fi_openkeidas_articles_controllers_item

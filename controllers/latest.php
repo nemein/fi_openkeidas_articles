@@ -18,37 +18,78 @@ class fi_openkeidas_articles_controllers_latest
         return $nodes[$node_id];
     }
 
-    public function get_items(array $args)
+    private function prepare_qb(midgardmvc_core_node $node, $limit, $offset = 0)
     {
         $qb = new midgard_query_builder('fi_openkeidas_articles_article');
-        
-        $node = $this->request->get_node()->get_object();
-        $this->data['title'] = $node->title;
         $qb->add_constraint('node', 'INTREE', $node->id);
-
         if (!midgardmvc_ui_create_injector::can_use())
         {
             // Regular user, hide unapproved articles
             // TODO: This check should be moved to authentication service when QB has signals
             $qb->add_constraint('metadata.isapproved', '=', true);
         }
-
         $qb->add_order('metadata.created', 'DESC');
-        $qb->set_limit(midgardmvc_core::get_instance()->configuration->index_items);
+        $qb->set_limit($limit);
+        $qb->set_offset($offset);
+        return $qb;
+    }
+
+    public function get_items(array $args)
+    {
+        $node = $this->request->get_node()->get_object();
+        $this->data['title'] = $node->title;
+
+        if (!isset($args['page']))
+        {
+            $args['page'] = 0;
+        }
+        elseif ($args['page'] == 0)
+        {
+            midgardmvc_core::get_instance()->head->relocate(midgardmvc_core::get_instance()->dispatcher->generate_url('index', array(), $this->request));
+        }
+
+        $items_per_page = midgardmvc_core::get_instance()->configuration->index_items;
+        $offset = (int) $items_per_page * $args['page'];
+        $qb = $this->prepare_qb($node, $items_per_page, $offset);
+
+        if ($args['page'] > 0)
+        {
+            if ($args['page'] == 1)
+            {
+                $this->data['previous_page'] = midgardmvc_core::get_instance()->dispatcher->generate_url('index', array(), $this->request);
+            }
+            else
+            {
+                $this->data['previous_page'] = midgardmvc_core::get_instance()->dispatcher->generate_url('index_page', array('page' => $args['page'] - 1), $this->request);
+            }
+        }
+        $next_qb = $this->prepare_qb($node, $items_per_page, $offset + $items_per_page);
+        $next_items = $next_qb->execute();
+        if (count($next_items) > 0)
+        {
+            $this->data['next_page'] = midgardmvc_core::get_instance()->dispatcher->generate_url('index_page', array('page' => $args['page'] + 1), $this->request);
+        }
+
         $items = $qb->execute();
+
+        if (   $args['page'] > 0
+            && empty($items))
+        {
+            throw new midgardmvc_exception_notfound("Page {$args['page']} not found)");
+        }
 
         $this->data['items'] = new midgardmvc_ui_create_container();
         foreach ($items as $item)
         {
-            if ($item->node == $this->request->get_node()->get_object()->id)
+            if ($item->node == $node->id)
             {
                 // Local news item
                 $item->url = midgardmvc_core::get_instance()->dispatcher->generate_url('item_read', array('item' => $item->guid), $this->request);
             }
             else
             {
-                $node = $this->get_node($item->node);
-                $item->url = midgardmvc_core::get_instance()->dispatcher->generate_url('item_read', array('item' => $item->guid), $node->get_path());
+                $subnode = $this->get_node($item->node);
+                $item->url = midgardmvc_core::get_instance()->dispatcher->generate_url('item_read', array('item' => $item->guid), $subnode->get_path());
             }
 
             $this->data['items']->attach($item);

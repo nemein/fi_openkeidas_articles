@@ -13,7 +13,19 @@
                 <span tal:content="php: item.metadata.created.format('Y-m-d')">1999-05-07</span>
                 <a tal:content="structure item/title" tal:attributes="href item/url; property item/rdfmapper/title">Blog post</a>
             </h3>
+            <div>
+            <tal:block tal:content="structure php:midgardmvc_helper_attachmentserver_helpers::render_location_image(item, 'lift_image', 'smallthumbnail')" />
+            </div>
             <div tal:content="structure item/content" tal:attributes="property item/rdfmapper/content">Lorem ipsum</div>
         </article>
+    </li>
+</ol>
+
+<ol class="articles_sub_navigation nextprevious">
+    <li tal:condition="exists: fi_openkeidas_articles/previous_page">
+        <a tal:attributes="href fi_openkeidas_articles/previous_page">Uudemmat</a>
+    </li>
+    <li tal:condition="exists: fi_openkeidas_articles/next_page">
+        <a tal:attributes="href fi_openkeidas_articles/next_page">Vanhemmat</a>
     </li>
 </ol>
