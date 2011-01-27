@@ -4,7 +4,7 @@ categories:
         categories:
             bar:
                 title: Bar
-index_items: 10
+index_items: 6
 index_container: container
 # favouriting statistics will be calculated for articles that within this node
 favouriting_root: keidas
