@@ -135,7 +135,7 @@ class fi_openkeidas_articles_controllers_latest
 
         // Read container type from config to know whether items can be created to this node
         $this->data['container_type'] = midgardmvc_core::get_instance()->configuration->index_container;
-        if ($this->data['container_type'] == 'container')
+        if ($this->data['container_type'] == 'http://purl.org/dc/dcmitype/Collection')
         {
             // Define placeholder to be used with UI on empty containers
             $dummy = new fi_openkeidas_articles_article();

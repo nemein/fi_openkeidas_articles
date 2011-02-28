@@ -5,7 +5,7 @@ categories:
             bar:
                 title: Bar
 index_items: 6
-index_container: container
+index_container: http://purl.org/dc/dcmitype/Collection
 # favouriting statistics will be calculated for articles that within this node
 favouriting_root: keidas
 # pie chart dimensions
