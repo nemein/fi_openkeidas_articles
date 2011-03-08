@@ -65,7 +65,8 @@ class fi_openkeidas_articles_controllers_latest
     public function get_items(array $args)
     {
         $node = $this->request->get_node()->get_object();
-        $this->data['title'] = $node->title;
+        $node->rdfmapper = new midgardmvc_ui_create_rdfmapper($node);
+        $this->data['node'] = $node;
 
         if (!isset($args['page']))
         {
@@ -144,6 +145,6 @@ class fi_openkeidas_articles_controllers_latest
             $this->data['items']->set_urlpattern(midgardmvc_core::get_instance()->dispatcher->generate_url('item_read', array('item' => 'GUID'), $this->request));
         }
 
-        midgardmvc_core::get_instance()->head->set_title($this->data['title']);
+        midgardmvc_core::get_instance()->head->set_title($this->data['node']->title);
     }
 }

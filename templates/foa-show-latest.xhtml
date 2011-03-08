@@ -1,4 +1,10 @@
-<h1 tal:content="fi_openkeidas_articles/title">Latest news</h1>
+<div tal:attributes="about fi_openkeidas_articles/node/rdfmapper/about; typeof fi_openkeidas_articles/node/rdfmapper/typeof">
+    <h1 tal:content="fi_openkeidas_articles/node/title">Latest news</h1>
+
+    <div tal:content="structure fi_openkeidas_articles/node/content" tal:attributes="property fi_openkeidas_articles/node/rdfmapper/content">
+        Node content
+    </div>
+</div>
 
 <ol class="articles_sub_navigation" tal:condition="exists: fi_openkeidas_articles/subnodes">
     <li tal:repeat="subnode fi_openkeidas_articles/subnodes">
