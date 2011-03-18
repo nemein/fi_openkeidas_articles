@@ -78,6 +78,10 @@ class fi_openkeidas_articles_controllers_latest
         }
 
         $items_per_page = midgardmvc_core::get_instance()->configuration->index_items;
+        if (isset($args['limit']))
+        {
+            $items_per_page = $args['limit'];
+        }
         $offset = (int) $items_per_page * $args['page'];
         $qb = $this->prepare_qb($node, $items_per_page, $offset);
 
