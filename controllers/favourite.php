@@ -220,11 +220,13 @@ class fi_openkeidas_articles_controllers_favourite
      */
     public function get_list(array $args)
     {
-        $id = $this->request->get_node()->get_object()->id;
+        $node = $this->request->get_node()->get_object();
+        $node->rdfmapper = new midgardmvc_ui_create_rdfmapper($node);
+        $this->data['node'] = $node;
 
         self::update_counters();
 
-        $node = self::get_root_of_object($id);
+        $node = self::get_root_of_object($this->data['node']->id);
 
         $this->data['title'] = $node->title;
         $this->data['items'] = new midgardmvc_ui_create_container();
