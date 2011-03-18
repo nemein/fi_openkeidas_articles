@@ -223,6 +223,7 @@ class fi_openkeidas_articles_controllers_favourite
         $node = $this->request->get_node()->get_object();
         $node->rdfmapper = new midgardmvc_ui_create_rdfmapper($node);
         $this->data['node'] = $node;
+        midgardmvc_core::get_instance()->head->set_title($this->data['node']->title);
 
         self::update_counters();
 
