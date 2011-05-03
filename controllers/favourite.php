@@ -133,6 +133,7 @@ class fi_openkeidas_articles_controllers_favourite
             $parent = new midgardmvc_core_node($node->up);
             $id = $node->up;
         } while (   $node->component == 'fi_openkeidas_articles'
+                 && $parent->up != 0
                  && $parent->id != 0
                  && $parent->name != $this->mvc->configuration->favouriting_root);
 
@@ -288,7 +289,7 @@ class fi_openkeidas_articles_controllers_favourite
         if (! $article_guid)
         {
             $qc = new midgard_query_constraint(
-                new midgard_query_property('metadata.creator', $storage),
+                new midgard_query_property('metadata.creator'),
                 '=',
                 new midgard_query_value($user_guid)
             );
@@ -297,12 +298,12 @@ class fi_openkeidas_articles_controllers_favourite
         {
             $qc = new midgard_query_constraint_group('AND');
             $qc->add_constraint(new midgard_query_constraint(
-                new midgard_query_property('metadata.creator', $storage),
+                new midgard_query_property('metadata.creator'),
                 '=',
                 new midgard_query_value($user_guid)
             ));
             $qc->add_constraint(new midgard_query_constraint(
-                new midgard_query_property('article', $storage),
+                new midgard_query_property('article'),
                 '=',
                 new midgard_query_value($article_guid)
             ));
