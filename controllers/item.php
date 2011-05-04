@@ -104,6 +104,169 @@ class fi_openkeidas_articles_controllers_item extends midgardmvc_core_controller
         }
 
         midgardmvc_core::get_instance()->head->add_jsfile(MIDGARDMVC_STATIC_URL . '/fi_openkeidas_articles/js/buttons.js');
+
+        $this->data['show_title'] = false;
+        $this->data['allow_comments'] = false;
+        $this->data['articleguid'] = '';
+        $this->data['comments'] = array();
+        $this->data['postaction'] = '';
+        $this->data['relocate'] = '';
+
+        $today = new DateTime('now');
+        $today = $today->getTimestamp();
+        $start = midgardmvc_core::get_instance()->configuration->commenting_timeframe['start'];
+        $end = midgardmvc_core::get_instance()->configuration->commenting_timeframe['end'];
+
+        // check if current date is within the configured time frame
+        if (   $today >= $start
+            && $today <= $end)
+        {
+            // check if current path is enabled for commenting
+            foreach (midgardmvc_core::get_instance()->configuration->commenting_paths as $path => $info)
+            {
+                $result = substr_compare($this->request->get_path(), $path, 0, strlen($path));
+
+                echo $this->request->get_path() . ' vs ' . $path . ', result: ' . $result . "\n";
+                ob_flush();
+
+                if ($result == 0)
+                {
+                    $this->data['allow_comments'] = true;
+                }
+            }
+
+            // populate data for the template in case commenting is allowed
+            if ($this->data['allow_comments'])
+            {
+                $this->data['articleguid'] = $this->object->guid;
+
+                // get comments
+                $this->data['comments'] = $this->get_comments($this->data['articleguid']);
+
+                // set the form's action
+                $this->data['postaction'] = midgardmvc_core::get_instance()->dispatcher->generate_url
+                (
+                    'article_comment_create', array
+                    (
+                        'articleguid' => $this->data['articleguid']
+                    ),
+                    'fi_openkeidas_website'
+                );
+            }
+
+            // show the "Comments" title only if there are comments,
+            // or commenting is allowed
+            if (   count($this->data['comments'])
+                || $this->data['allow_comments'])
+            {
+                $this->data['show_title'] = true;
+            }
+
+            // if post successful then relocate here
+            $this->data['relocate'] = $this->request->get_path();
+        }
+
+        echo 'path: ' . $this->request->get_path() . ', today: ' . $today . ', start: ' . $start . ', end: ' . $end . "\n";
+        ob_flush();
+    }
+
+    /**
+     * Retrieves all comments from the database
+     * @param guid object f which the comments should be gathered
+     * @return array of comment objects
+     */
+     private function get_comments($guid = null)
+     {
+        $storage = new midgard_query_storage('com_meego_comments_comment_author');
+        $q = new midgard_query_select($storage);
+        $q->set_constraint
+        (
+            new midgard_query_constraint
+            (
+                new midgard_query_property('to'),
+                '=',
+                new midgard_query_value($guid)
+            )
+        );
+
+        $q->add_order(new midgard_query_property('posted', $storage), SORT_DESC);
+        $q->execute();
+
+        return $q->list_objects();
+    }
+
+    /**
+     * Process article comments and ratings (later)
+     *
+     * @param array args
+     *
+     */
+    public function post_comment_article(array $args)
+    {
+        if (   ! is_array($_POST)
+            || ! isset($_POST['articleguid']))
+        {
+            midgardmvc_core::get_instance()->head->relocate($_POST['relocate']);
+        }
+
+        $this->data['feedback'] = false;
+
+        $guid = $_POST['articleguid'];
+
+        $comment = null;
+
+        // if comment is also given then create a new comment entry
+        if (isset($_POST['comment']))
+        {
+            $content = $_POST['comment'];
+            if (strlen($content))
+            {
+                // save comment only if the content is not empty
+                $comment = new com_meego_comments_comment();
+
+                $comment->to = $guid;
+                $comment->content = $content;
+
+                if (! $comment->create())
+                {
+                    die("can't create comment");
+                }
+            }
+        }
+
+        if (isset($_POST['rating']))
+        {
+            $rate = $_POST['rating'];
+
+            if ($rate > $this->mvc->configuration->maxrate)
+            {
+                $rate = $this->mvc->configuration->maxrate;
+            }
+
+            $rating = new com_meego_ratings_rating();
+
+            $rating->to = $guid;
+            $rating->rating = $rate;
+
+            if (is_object($comment))
+            {
+                $rating->comment = $comment->id;
+            }
+
+            if ($rating->create())
+            {
+                $this->data['feedback'] = 'ok';
+            }
+            else
+            {
+                $this->data['feedback'] = 'nok';
+            }
+        }
+
+        if (isset($_POST['relocate']))
+        {
+            midgardmvc_core::get_instance()->head->relocate($_POST['relocate']);
+        }
     }
 }
 ?>

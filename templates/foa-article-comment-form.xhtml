@@ -1,0 +1,33 @@
+        <div class="comments">
+
+            <h2 i18n:translate="'comments'" tal:condition="true: fi_openkeidas_articles/show_title"/>
+
+            <tal:block tal:condition="true: fi_openkeidas_articles/allow_comments">
+            <div class="status" tal:condition="not: fi_openkeidas_articles/comments" i18n:translate="'first_to_comment'"></div>
+
+            <form method="post" tal:attributes="action fi_openkeidas_articles/postaction">
+                <input type="hidden" name="relocate" tal:attributes="value fi_openkeidas_articles/relocate"/>
+
+                <input type="hidden" name="articleguid" tal:attributes="value fi_openkeidas_articles/articleguid"/>
+
+                <textarea name="comment"/>
+
+                <input type="submit" class="midgardmvc_helper_forms_form_save" i18n:attributes="value command_submit"/>
+            </form>
+            </tal:block>
+
+            <ul class="list" tal:condition="true: fi_openkeidas_articles/comments" tal:define="comments fi_openkeidas_articles/comments">
+                <!-- list of comments -->
+                <li tal:repeat="comment comments">
+                    <div class="header">
+                        <div class="author">
+                            <span class="firstname" tal:content="comment/authorfirstname">Firstname</span>
+                            <span class="lastname" tal:content="comment/authorlastname">Lastname</span>
+                        </div>
+                        <div class="date" tal:content="php: comment.posted.format('Y-m-d H:m')">Date</div>
+                    </div>
+                    <div class="comment" tal:content="comment/content">Comment</div>
+                </li>
+            </ul>
+
+        </div>

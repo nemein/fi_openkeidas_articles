@@ -21,3 +21,12 @@ msgstr "kpl"
 
 msgid "no_favourites_in_topic"
 msgstr "Ei suosikkeja tästä aiheesta"
+
+msgid "comments"
+msgstr "Kommentit"
+
+msgid "first_to_comment"
+msgstr "Be the first to comment!"
+
+msgid "command_submit"
+msgstr "Lähetä"
