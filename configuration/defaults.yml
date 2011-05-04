@@ -1,13 +1,32 @@
+# @todo: comment
 categories:
     foo:
         title: Foo
         categories:
             bar:
                 title: Bar
+
+# maximum number of articles shown on a page
 index_items: 6
+
+# @todo: comment
 index_container: http://purl.org/dc/dcmitype/Collection
-# favouriting statistics will be calculated for articles that within this node
+
+# favouriting statistics will be calculated for articles within this node
 favouriting_root: keidas
+
+# commenting enabled for articles under these paths only
+# The info part needs to be there, but it has no special meaning
+commenting_paths:
+    /keidas/ravinto/: Some info
+    /keidas/terveys/painonhallinta: Some info
+
+# Time frame when commenting is allowed
+# always use YYYY-MM-DD format
+commenting_timeframe:
+    start: 2011-05-05
+    end: 2011-05-20
+
 # pie chart dimensions
 pie_chart:
     provider: /euc:pie/simple?type=png&width=120&height=120
