@@ -196,15 +196,13 @@ class fi_openkeidas_articles_controllers_item extends midgardmvc_core_controller
 
         $retval = array();
 
-        function stuff($matches) {
-            return chr(octdec($matches[1]));
-        }
-
         foreach ($comments as $comment)
         {
             $object = $comment;
 
-            $string = preg_replace_callback('|\\\(\d{3})|', 'stuff', $comment->content);
+            $string = preg_replace_callback('|\\\(\d{3})|', function($matches) {
+                return chr(octdec($matches[1]));
+            }, $comment->content);
 
             $object->fixed_content = $string;
             $retval[] = $object;
