@@ -126,8 +126,8 @@ class fi_openkeidas_articles_controllers_item extends midgardmvc_core_controller
             {
                 $result = substr_compare($this->request->get_path(), $path, 0, strlen($path));
 
-                echo $this->request->get_path() . ' vs ' . $path . ', result: ' . $result . "\n";
-                ob_flush();
+                #echo $this->request->get_path() . ' vs ' . $path . ', result: ' . $result . "\n";
+                #ob_flush();
 
                 if ($result == 0)
                 {
@@ -166,8 +166,8 @@ class fi_openkeidas_articles_controllers_item extends midgardmvc_core_controller
             $this->data['relocate'] = $this->request->get_path();
         }
 
-        echo 'path: ' . $this->request->get_path() . ', today: ' . $today . ', start: ' . $start . ', end: ' . $end . "\n";
-        ob_flush();
+        #echo 'path: ' . $this->request->get_path() . ', today: ' . $today . ', start: ' . $start . ', end: ' . $end . "\n";
+        #ob_flush();
     }
 
     /**
@@ -192,7 +192,25 @@ class fi_openkeidas_articles_controllers_item extends midgardmvc_core_controller
         $q->add_order(new midgard_query_property('posted', $storage), SORT_DESC);
         $q->execute();
 
-        return $q->list_objects();
+        $comments = $q->list_objects();
+
+        $retval = array();
+
+        function stuff($matches) {
+            return chr(octdec($matches[1]));
+        }
+
+        foreach ($comments as $comment)
+        {
+            $object = $comment;
+
+            $string = preg_replace_callback('|\\\(\d{3})|', 'stuff', $comment->content);
+
+            $object->fixed_content = $string;
+            $retval[] = $object;
+        }
+
+        return $retval;
     }
 
     /**
