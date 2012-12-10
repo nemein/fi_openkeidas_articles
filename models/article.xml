@@ -13,6 +13,7 @@
             <required>true</required>
             <property>dcterms:title</property>
         </property>
+        <property name="url" type="string" />
         <property name="node" type="unsigned integer" link="midgardmvc_core_node:id" parentfield="node">
             <description>Article category</description>
             <required>true</required>

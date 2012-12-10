@@ -38,17 +38,13 @@ class fi_openkeidas_articles_controllers_item extends midgardmvc_core_controller
             // TODO: This check should be moved to authentication
             throw new midgardmvc_exception_notfound("No article found");
         }
-
-        $this->object->rdfmapper = new midgardmvc_ui_create_rdfmapper($this->object);
-
+        $this->object = new midgardmvc_ui_create_decorator($this->object);
         midgardmvc_core::get_instance()->head->set_title($this->object->title);
     }
 
     public function prepare_new_object(array $args)
     {
-        $this->object = new fi_openkeidas_articles_article();
-
-        $this->object->rdfmapper = new midgardmvc_ui_create_rdfmapper($this->object);
+        $this->object = new midgardmvc_ui_create_decorator(new fi_openkeidas_articles_article());
     }
 
     public function get_url_read()

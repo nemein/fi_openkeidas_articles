@@ -65,7 +65,7 @@ class fi_openkeidas_articles_controllers_latest
     public function get_items(array $args)
     {
         $node = $this->request->get_node()->get_object();
-        $node->rdfmapper = new midgardmvc_ui_create_rdfmapper($node);
+        $node = new midgardmvc_ui_create_decorator($node);
         $this->data['node'] = $node;
 
         if (!isset($args['page']))
@@ -83,7 +83,7 @@ class fi_openkeidas_articles_controllers_latest
             $items_per_page = $args['limit'];
         }
         $offset = (int) $items_per_page * $args['page'];
-        $qb = $this->prepare_qb($node, $items_per_page, $offset);
+        $qb = $this->prepare_qb($node->get_object(), $items_per_page, $offset);
 
         if ($args['page'] > 0)
         {
@@ -96,7 +96,7 @@ class fi_openkeidas_articles_controllers_latest
                 $this->data['previous_page'] = midgardmvc_core::get_instance()->dispatcher->generate_url('index_page', array('page' => $args['page'] - 1), $this->request);
             }
         }
-        $next_qb = $this->prepare_qb($node, $items_per_page, $offset + $items_per_page);
+        $next_qb = $this->prepare_qb($node->get_object(), $items_per_page, $offset + $items_per_page);
         $next_items = $next_qb->execute();
         if (count($next_items) > 0)
         {

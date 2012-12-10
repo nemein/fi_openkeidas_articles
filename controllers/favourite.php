@@ -222,7 +222,7 @@ class fi_openkeidas_articles_controllers_favourite
     public function get_list(array $args)
     {
         $node = $this->request->get_node()->get_object();
-        $node->rdfmapper = new midgardmvc_ui_create_rdfmapper($node);
+        $node = new midgardmvc_ui_create_decorator($node);
         $this->data['node'] = $node;
         midgardmvc_core::get_instance()->head->set_title($this->data['node']->title);
 
@@ -278,7 +278,7 @@ class fi_openkeidas_articles_controllers_favourite
      * @return array of db entries
      *
      */
-    public function load_favourites($user_guid = null, $article_guid = null)
+    public static function load_favourites($user_guid = null, $article_guid = null)
     {
         if (! $user_guid)
         {
