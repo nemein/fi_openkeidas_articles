@@ -109,6 +109,7 @@ class fi_openkeidas_articles_controllers_item extends midgardmvc_core_controller
 
         $this->data['show_title'] = false;
         $this->data['allow_comments'] = false;
+        $this->data['allow_favorites'] = midgardmvc_core::get_instance()->authentication->is_user();
         $this->data['articleguid'] = '';
         $this->data['comments'] = array();
         $this->data['postaction'] = '';
