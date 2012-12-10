@@ -84,7 +84,13 @@ class fi_openkeidas_articles_controllers_item extends midgardmvc_core_controller
         $this->data['favs'] = fi_openkeidas_articles_controllers_favourite::count_favourites($this->object->guid);
 
         // check if the item has already been favourited by this user
-        $user_guid = midgardmvc_core::get_instance()->authentication->get_person()->guid;
+        $user_guid = '';
+        $results = array();
+        if (midgardmvc_core::get_instance()->authentication->is_user())
+        {
+            $user_guid = midgardmvc_core::get_instance()->authentication->get_person()->guid;
+            $results = fi_openkeidas_articles_controllers_favourite::load_favourites($user_guid, $this->object->guid);
+        }
 
         $results = fi_openkeidas_articles_controllers_favourite::load_favourites($user_guid, $this->object->guid);
 

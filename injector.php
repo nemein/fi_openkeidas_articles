@@ -23,10 +23,13 @@ class fi_openkeidas_articles_injector
         }
 
         $component = $request->get_node()->get_component();
+/* Patch out article authorization 200712 */
+/*
         if ($component == 'fi_openkeidas_articles')
         {
             midgardmvc_core::get_instance()->authorization->require_user();
         }
+*/
 
     }
 
